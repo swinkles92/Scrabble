@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class WordSolverMain {
@@ -13,10 +14,18 @@ public class WordSolverMain {
                 "..  m  a  t .. .3 ..\n" +
                 " r  e  S  i  d .. 3.\n";
         char[] tray = {'t', 'o', 'l', 'o', 'e', 'r', 'i'};
-        ArrayList<String> boardSpaces = new ArrayList<>();
+        String[][] boardSpaces = new String[7][7];
         boardSpaces = GameLoop.parseBoardString(boardSize, gameBoard, boardSpaces);
-        gameBoard = GameLoop.board2String(boardSize, boardSpaces);
-        System.out.println(gameBoard);
+        for(int i = 0; i < 7; i++) {
+            for(int j = 0; j < 7; j++) {
+                System.out.print(boardSpaces[i][j] + " ");
+            }
+            System.out.println('\n');
+        }
+        ArrayList<String[]> possAnchors = GameLoop.findPossAnchors(boardSpaces);
+        for(int i = 0; i < possAnchors.size(); i ++) {
+            System.out.println(Arrays.toString(possAnchors.get(i)));
+        }
         String[] words = {"car", "cars", "cat", "cats", "do", "dog",
                 "dogs", "done", "ear", "ears", "eat", "eats"};
         WordTrie wordTrie = new WordTrie();
