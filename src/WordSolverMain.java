@@ -29,7 +29,9 @@ public class WordSolverMain {
         String[] words = {"car", "cars", "cat", "cats", "do", "dog",
                 "dogs", "done", "ear", "ears", "eat", "eats"};
         WordTrie wordTrie = new WordTrie();
+        int wordCounter = 0;
         for(String word : words) {
+            wordCounter++;
             wordTrie.add(word);
         }
         /*Scanner sc = new Scanner(System.in);

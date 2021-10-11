@@ -71,4 +71,10 @@ public class GameLoop {
         }
         return anchorsList;
     }
+    public ArrayList<String> findPossWords(char c, WordTrie wordTrie, int dictionarySize) {
+        ArrayList<String> possWords = new ArrayList<>();
+        /*for(int i = 0; i < dictionarySize; i++) {
+        }*/
+        return possWords;
+    }
 }

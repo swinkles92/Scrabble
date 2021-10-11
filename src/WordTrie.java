@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WordTrie {
@@ -42,5 +43,13 @@ public class WordTrie {
             return true;
         }
         else return false;
+    }
+    public ArrayList<String> findWords(char c) {
+        ArrayList<String> possWords = new ArrayList<>();
+        HashMap<Character, WordTNode> children = root.getChildren();
+        for(char a : children.keySet()) {
+
+        }
+        return possWords;
     }
 }
