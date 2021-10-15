@@ -12,9 +12,6 @@ public class WordTNode {
     public HashMap<Character, WordTNode> getChildren() {
         return children;
     }
-    public void setChildren(HashMap<Character, WordTNode> children) {
-        this.children = children;
-    }
     public boolean isCompleteWord() {
         return isCompleteWord;
     }

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WordTrie {
-    private WordTNode root;
+    public WordTNode root;
 
     public WordTrie() {
         root = new WordTNode();
