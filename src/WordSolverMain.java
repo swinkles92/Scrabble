@@ -46,10 +46,12 @@ public class WordSolverMain {
         for(Object word : wordsList) {
             wordTrie.add((String) word);
         }
-        wordTrie.contains("xylophone");
-        String test = GameLoop.extendRight(boardSpaces, wordTrie, tray, 2, 2,
-                "", wordTrie.root);
-        System.out.println(test);
+        ArrayList<String> legalWords = new ArrayList<>();
+        GameLoop.leftPart(boardSpaces, wordTrie, tray, 2, 2,
+                "", wordTrie.root, legalWords, 2);
+        for(String word : legalWords) {
+            System.out.println(word);
+        }
         /*ArrayList<String[]> possAnchors = GameLoop.crossCheck(boardSpaces, wordTrie);
         for(int i = 0; i < possAnchors.size(); i ++) {
             System.out.println(Arrays.toString(possAnchors.get(i)));
