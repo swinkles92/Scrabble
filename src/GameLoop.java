@@ -12,12 +12,6 @@ public class GameLoop {
         // bestWordHoriz = {row, col, word, wordScore};
         String[] bestWordVert = {"0", "0", "0", "0"};
         String[][] transMat = transposeBoard(boardSpaces);
-        for(int i = 0; i < boardSpaces.length; i++) {
-            for (int j = 0; j < boardSpaces.length; j++) {
-                System.out.print(transMat[i][j] + " ");
-            }
-            System.out.println('\n');
-        }
         // Horizontal Search
         ArrayList<String[]> possAnchors = GameLoop.findPossAnchors(boardSpaces);
         for(String[] anchor : possAnchors) {
@@ -35,7 +29,6 @@ public class GameLoop {
                         "", wordTrie.root, possWords, k);
             }
             for(String word : possWords) {
-                //System.out.println(word);
                 wordScore = scoreWord(word);
                 if(wordScore > Integer.parseInt(bestWordHoriz[3])) {
                     bestWordHoriz[0] = String.valueOf(row);
@@ -74,8 +67,6 @@ public class GameLoop {
                 }
             }
         }
-        System.out.println(bestWordHoriz[2]);
-        System.out.println(bestWordVert[2]);
     }
     public static String[][] parseBoardString(int boardSize, String gameBoard, String[][] boardSpaces) {
         LinkedList<String> temp = new LinkedList<>();
@@ -113,7 +104,7 @@ public class GameLoop {
                                 String.valueOf(boardSpaces[i][j - 1])};
                         anchorsList.add(tmp);
                     }
-                    else if((j + 1) < boardSpaces.length &&
+                    if((j + 1) < boardSpaces.length &&
                             boardSpaces[i][j + 1].contains(".")) {
                         String[] tmp = {
                                 String.valueOf(i),
@@ -121,7 +112,7 @@ public class GameLoop {
                                 String.valueOf(boardSpaces[i][j + 1])};
                         anchorsList.add(tmp);
                     }
-                    else if((i + 1) < boardSpaces.length &&
+                    if((i + 1) < boardSpaces.length &&
                             boardSpaces[i + 1][j].contains(".")) {
                         String[] tmp = {
                                 String.valueOf(i + 1),
@@ -129,7 +120,7 @@ public class GameLoop {
                                 String.valueOf(boardSpaces[i][j].charAt(1))};
                         anchorsList.add(tmp);
                     }
-                    else if((i - 1) >= 0 &&
+                    if((i - 1) >= 0 &&
                             boardSpaces[i - 1][j].contains(".")) {
                         String[] tmp = {
                                 String.valueOf(i - 1),
@@ -235,6 +226,13 @@ public class GameLoop {
     }
     public static String findDownWord(String[][] boardSpaces, int row, int col) {
         String word = "";
+        for(int i = row; i >= 0; i--) {
+            if(boardSpaces[i][col].contains(" ")) {
+                String tmp = boardSpaces[i][col];
+                word = tmp.trim() + word;
+            }
+            else break;
+        }
         for(int i = row; i < boardSpaces.length; i++) {
             if(boardSpaces[i][col].contains(" ")) {
                 String tmp = boardSpaces[i][col];
@@ -255,20 +253,32 @@ public class GameLoop {
                                 int limit) {
         HashMap<Character, WordTNode> children = node.getChildren();
         WordTNode letterNode;
-        extendRight(boardSpaces, wordTrie, tray, row, col, partialWord, node, legalWords);
-        if(limit > 0) {
-            for(var child : children.keySet()) {
-                if (tray.contains(child.charValue())) {
+        if(col >= 0) {
+            extendRight(boardSpaces, wordTrie, tray, row, col, partialWord, node, legalWords);
+            if(limit > 0) {
+                for(var child : children.keySet()) {
                     char c = child.charValue();
-                    tray.remove(Character.valueOf(c));
-                    if(children.get(c) != null) {
-                        letterNode = children.get(c);
-                        children = letterNode.getChildren();
-                        partialWord = c + partialWord;
-                        leftPart(boardSpaces, wordTrie, tray,
-                                row, col, partialWord, letterNode, legalWords, limit - 1);
+                    if (tray.contains(child.charValue())) {
+                        tray.remove(Character.valueOf(c));
+                        if(children.get(c) != null) {
+                            letterNode = children.get(c);
+                            children = letterNode.getChildren();
+                            partialWord = c + partialWord;
+                            /*for(char x : tray) {
+                                System.out.print(x);
+                            }
+                            System.out.println();
+                            System.out.println("Limit: " + limit);
+                            System.out.println(partialWord);*/
+                            if(wordTrie.contains(partialWord)) {
+                                System.out.println(partialWord);
+                            }
+                            if(col >= 0) col--;
+                            leftPart(boardSpaces, wordTrie, tray,
+                                    row, col, partialWord, letterNode, legalWords, limit - 1);
+                        }
+                        tray.add(c);
                     }
-                    tray.add(c);
                 }
             }
         }

@@ -24,7 +24,7 @@ public class WordSolverMain {
         tray.add('o');
         tray.add('e');
         tray.add('r');
-        tray.add('d');
+        tray.add('i');
         //['t', 'o', 'l', 'o', 'e', 'r', 'i';];
         String[][] boardSpaces = new String[7][7];
         boardSpaces = GameLoop.parseBoardString(boardSize, gameBoard, boardSpaces);
@@ -47,11 +47,12 @@ public class WordSolverMain {
             wordTrie.add((String) word);
         }
 
-        GameLoop.cpuTurn(boardSpaces, wordTrie, tray);
-        /*ArrayList<String> legalWords = new ArrayList<>();
-        GameLoop.leftPart(boardSpaces, wordTrie, tray, 2, 1,
-                "", wordTrie.root, legalWords, 2);
-        for(String word : legalWords) {
+        //GameLoop.cpuTurn(boardSpaces, wordTrie, tray);
+        String[][] transMat = GameLoop.transposeBoard(boardSpaces);
+        ArrayList<String> legalWords = new ArrayList<>();
+        GameLoop.leftPart(transMat, wordTrie, tray, 5, 6,
+                "", wordTrie.root, legalWords, 6);
+        /*for(String word : legalWords) {
             System.out.println(word);
         }*/
         /*ArrayList<String[]> possAnchors = GameLoop.crossCheck(boardSpaces, wordTrie);
