@@ -4,8 +4,78 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class GameLoop {
-    public void cpuTurn() {
-
+    public static void cpuTurn(String[][] boardSpaces, WordTrie wordTrie, ArrayList<Character> tray) {
+        ArrayList<String> possWords = new ArrayList<>();
+        int row, col, k, wordScore;
+        // bestWordHoriz = {row, col, word, wordScore};
+        String[] bestWordHoriz = {"0", "0", "0", "0"};
+        // bestWordHoriz = {row, col, word, wordScore};
+        String[] bestWordVert = {"0", "0", "0", "0"};
+        String[][] transMat = transposeBoard(boardSpaces);
+        for(int i = 0; i < boardSpaces.length; i++) {
+            for (int j = 0; j < boardSpaces.length; j++) {
+                System.out.print(transMat[i][j] + " ");
+            }
+            System.out.println('\n');
+        }
+        // Horizontal Search
+        ArrayList<String[]> possAnchors = GameLoop.findPossAnchors(boardSpaces);
+        for(String[] anchor : possAnchors) {
+            possWords.clear();
+            row = Integer.parseInt(anchor[0]);
+            col = Integer.parseInt(anchor[1]);
+            k = col;
+            if(col - 1 > 0 && boardSpaces[row][col - 1].contains(" ")) {
+                String tmp = findPrefix(boardSpaces, row, col);
+                GameLoop.extendRight(boardSpaces, wordTrie, tray, row, col, tmp,
+                        wordTrie.root, possWords);
+            }
+            else {
+                GameLoop.leftPart(boardSpaces, wordTrie, tray, row, col,
+                        "", wordTrie.root, possWords, k);
+            }
+            for(String word : possWords) {
+                //System.out.println(word);
+                wordScore = scoreWord(word);
+                if(wordScore > Integer.parseInt(bestWordHoriz[3])) {
+                    bestWordHoriz[0] = String.valueOf(row);
+                    bestWordHoriz[1] = String.valueOf(col);
+                    bestWordHoriz[2] = word;
+                    bestWordHoriz[3] = String.valueOf(wordScore);
+                }
+            }
+        }
+        // Vertical Search
+        possAnchors.clear();
+        possAnchors = GameLoop.findPossAnchors(transMat);
+        for(String[] anchor : possAnchors) {
+            System.out.println(Arrays.toString(anchor));
+            possWords.clear();
+            row = Integer.parseInt(anchor[0]);
+            col = Integer.parseInt(anchor[1]);
+            k = col;
+            if(col - 1 > 0 && transMat[row][col - 1].contains(" ")) {
+                String tmp = findPrefix(transMat, row, col);
+                GameLoop.extendRight(transMat, wordTrie, tray, row, col, tmp,
+                        wordTrie.root, possWords);
+            }
+            else {
+                GameLoop.leftPart(transMat, wordTrie, tray, row, col,
+                        "", wordTrie.root, possWords, k);
+            }
+            for(String word : possWords) {
+                //System.out.println(word);
+                wordScore = scoreWord(word);
+                if(wordScore > Integer.parseInt(bestWordVert[3])) {
+                    bestWordVert[0] = String.valueOf(row);
+                    bestWordVert[1] = String.valueOf(col);
+                    bestWordVert[2] = word;
+                    bestWordVert[3] = String.valueOf(wordScore);
+                }
+            }
+        }
+        System.out.println(bestWordHoriz[2]);
+        System.out.println(bestWordVert[2]);
     }
     public static String[][] parseBoardString(int boardSize, String gameBoard, String[][] boardSpaces) {
         LinkedList<String> temp = new LinkedList<>();
@@ -35,26 +105,26 @@ public class GameLoop {
         ArrayList<String[]> anchorsList = new ArrayList<>();
         for(int i = 0; i < boardSpaces.length; i++) {
             for(int j = 0; j < boardSpaces.length; j++) {
-                if(boardSpaces[i][j].contains(" ")) {
+                if(boardSpaces[i][j].charAt(0) == ' ') {
                     if((j - 1) >= 0 && boardSpaces[i][j-1].contains(".")) {
                         String[] tmp = {
                                 String.valueOf(i),
-                                String.valueOf(j),
-                                String.valueOf(boardSpaces[i][j].charAt(1))};
+                                String.valueOf(j - 1),
+                                String.valueOf(boardSpaces[i][j - 1])};
                         anchorsList.add(tmp);
                     }
                     else if((j + 1) < boardSpaces.length &&
                             boardSpaces[i][j + 1].contains(".")) {
                         String[] tmp = {
                                 String.valueOf(i),
-                                String.valueOf(j),
-                                String.valueOf(boardSpaces[i][j].charAt(1))};
+                                String.valueOf(j + 1),
+                                String.valueOf(boardSpaces[i][j + 1])};
                         anchorsList.add(tmp);
                     }
-                    /*else if((i + 1) < boardSpaces.length &&
+                    else if((i + 1) < boardSpaces.length &&
                             boardSpaces[i + 1][j].contains(".")) {
                         String[] tmp = {
-                                String.valueOf(i),
+                                String.valueOf(i + 1),
                                 String.valueOf(j),
                                 String.valueOf(boardSpaces[i][j].charAt(1))};
                         anchorsList.add(tmp);
@@ -62,11 +132,11 @@ public class GameLoop {
                     else if((i - 1) >= 0 &&
                             boardSpaces[i - 1][j].contains(".")) {
                         String[] tmp = {
-                                String.valueOf(i),
+                                String.valueOf(i - 1),
                                 String.valueOf(j),
                                 String.valueOf(boardSpaces[i][j].charAt(1))};
                         anchorsList.add(tmp);
-                    }*/
+                    }
                 }
             }
         }
@@ -244,6 +314,7 @@ public class GameLoop {
             }
             else {
                 String squareString = boardSpaces[row][col].trim();
+                squareString = squareString.toLowerCase();
                 char c = squareString.charAt(0);
                 letterNode = children.get(c);
                 if(children.containsKey(c)) {
@@ -254,5 +325,81 @@ public class GameLoop {
                 }
             }
         }
+    }
+    public static int findK(String[][] boardSpaces, int row, int col) {
+        int k = 0;
+        for(int i = col; i > 0; i--) {
+            k++;
+        }
+        return k;
+    }
+    public static int scoreWord(String word) {
+        int score = 0;
+        for(int i = 0; i < word.length(); i++) {
+            if(word.charAt(i) == 'a' ||
+                    word.charAt(i) == 'e' ||
+                    word.charAt(i) == 'i' ||
+                    word.charAt(i) == 'o' ||
+                    word.charAt(i) == 'u' ||
+                    word.charAt(i) == 'l' ||
+                    word.charAt(i) == 'n' ||
+                    word.charAt(i) == 's' ||
+                    word.charAt(i) == 't' ||
+                    word.charAt(i) == 'r') {
+                score += 1;
+            }
+            else if(word.charAt(i) == 'd' || word.charAt(i) == 'g') {
+                score += 2;
+            }
+            else if(word.charAt(i) == 'b' ||
+                    word.charAt(i) == 'c' ||
+                    word.charAt(i) == 'm' ||
+                    word.charAt(i) == 'p') {
+                score += 3;
+            }
+            else if(word.charAt(i) == 'f' ||
+                    word.charAt(i) == 'h' ||
+                    word.charAt(i) == 'v' ||
+                    word.charAt(i) == 'w' ||
+                    word.charAt(i) == 'y') {
+                score += 4;
+            }
+            else if(word.charAt(i) == 'k') {
+                score += 5;
+            }
+            else if(word.charAt(i) == 'j' || word.charAt(i) == 'x') {
+                score += 8;
+            }
+            // Q or Z
+            else score += 10;
+        }
+        return score;
+    }
+    public static String[][] transposeBoard(String[][] boardSpaces) {
+        int size = boardSpaces.length;
+        String[][] transposedMatrix = new String[size][size];
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                transposedMatrix[i][j] = boardSpaces[j][i];
+            }
+        }
+        /*for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                System.out.print(transposedMatrix[i][j] + " ");
+            }
+            System.out.println('\n');
+        }*/
+        return transposedMatrix;
+    }
+    public static String findPrefix(String[][] boardSpaces, int row, int col) {
+        String word = "";
+        for(int i = col; i > 0; i--) {
+            if(boardSpaces[i][col].contains(" ")) {
+                String tmp = boardSpaces[row][i];
+                word = tmp.trim() + word;
+            }
+            else break;
+        }
+        return word;
     }
 }

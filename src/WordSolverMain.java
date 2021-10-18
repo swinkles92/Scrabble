@@ -16,7 +16,7 @@ public class WordSolverMain {
                 "2. ..  u  h .. .. 2.\n" +
                 ".. ..  l  o .2 .. ..\n" +
                 "..  m  a  t .. .3 ..\n" +
-                " r  e  S  i  d .. 3.\n";
+                " r  e  s  i  d .. 3.\n";
         ArrayList<Character> tray = new ArrayList<>();
         tray.add('t');
         tray.add('o');
@@ -39,19 +39,21 @@ public class WordSolverMain {
             System.out.println(Arrays.toString(possAnchors.get(i)));
         }*/
 
-        File wordFile = new File("./resources/dictionary.txt");
+        File wordFile = new File("./resources/sowpods.txt");
         List wordsList = ParseFile.readFileToList(wordFile.toString());
         wordsList = ParseFile.readFileToList(wordFile.toString());
         WordTrie wordTrie = new WordTrie();
         for(Object word : wordsList) {
             wordTrie.add((String) word);
         }
-        ArrayList<String> legalWords = new ArrayList<>();
-        GameLoop.leftPart(boardSpaces, wordTrie, tray, 2, 2,
+
+        GameLoop.cpuTurn(boardSpaces, wordTrie, tray);
+        /*ArrayList<String> legalWords = new ArrayList<>();
+        GameLoop.leftPart(boardSpaces, wordTrie, tray, 2, 1,
                 "", wordTrie.root, legalWords, 2);
         for(String word : legalWords) {
             System.out.println(word);
-        }
+        }*/
         /*ArrayList<String[]> possAnchors = GameLoop.crossCheck(boardSpaces, wordTrie);
         for(int i = 0; i < possAnchors.size(); i ++) {
             System.out.println(Arrays.toString(possAnchors.get(i)));
