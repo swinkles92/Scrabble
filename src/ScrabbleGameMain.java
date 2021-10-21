@@ -3,9 +3,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -15,16 +15,27 @@ import javafx.stage.Stage;
 
 public class ScrabbleGameMain extends Application{
     private final int SIZE = 800;
-
+    private int score = 0;
+    private char[] trayArray = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+    private int selectedTrayEle = 0;
     public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Scrabble");
-
         BorderPane root = new BorderPane();
+
         TilePane gameBoard = generateBoard();
         root.setCenter(gameBoard);
+
+        VBox topVBox = new VBox();
+        Label scoreLabel = new Label("Score: " + score);
+        topVBox.getChildren().add(scoreLabel);
+        topVBox.setAlignment(Pos.CENTER);
+        root.setTop(topVBox);
+
+        TilePane trayPane = generateTray(trayArray);
+        root.setBottom(trayPane);
 
         Scene scene = new Scene(root, SIZE, SIZE);
         scene.setFill(Color.LIGHTGRAY);
@@ -75,6 +86,24 @@ public class ScrabbleGameMain extends Application{
             gameBoard.getChildren().add(stackPane);
         }*/
         return gameBoard;
+    }
+    public TilePane generateTray(char[] trayArray) {
+        TilePane trayPane = new TilePane();
+        trayPane.setAlignment(Pos.CENTER);
+        trayPane.setVgap(.25);
+        trayPane.setHgap(.25);
+        for(int i = 0; i < 7; i++) {
+            StackPane stackPane = new StackPane();
+            Rectangle rect = new Rectangle(SIZE / 10, SIZE / 10);
+            rect.setFill(Color.MISTYROSE);
+            Label label = new Label(String.valueOf(trayArray[i]));
+            label.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+            label.setTextFill(Color.CORNFLOWERBLUE);
+            label.setMouseTransparent(true);
+            stackPane.getChildren().addAll(rect, label);
+            trayPane.getChildren().add(stackPane);
+        }
+        return trayPane;
     }
     public String[][] getBoardConfig() {
         String[][] boardConfig = {

@@ -1,19 +1,17 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ParseDictionary {
-    public ParseDictionary() {
-
-    }
-    public ArrayList sortDictionary(String[] words) {
-        ArrayList<String> wordList = new ArrayList<>();
+    public static ArrayList parseDictionary(List<String> words) {
+        ArrayList<String> newDictionary = new ArrayList<>();
         for(String word : words) {
-            if(!wordList.contains(word)) {
+            if(!newDictionary.contains(word)) {
                 word = word.toLowerCase();
-                wordList.add(word);
+                newDictionary.add(word);
             }
         }
-        Collections.sort(wordList);
-        return wordList;
+        Collections.sort(newDictionary);
+        return newDictionary;
     }
 }
