@@ -84,7 +84,7 @@ public class GameLoop {
             mutateBoard(boardSpaces, bestWord, bestWordRow, bestWordCol, isHorizWord);
         }
         int bestWordScore = scoreWord(bestWord);
-        /*System.out.println("Solution " + bestWord + " has " + bestWordScore + " points");
+        System.out.println("Solution " + bestWord + " has " + bestWordScore + " points");
         System.out.println("Solution Board:");
         for(int i = 0; i < boardSpaces.length; i++) {
             for(int j = 0; j < boardSpaces.length; j++) {
@@ -92,7 +92,7 @@ public class GameLoop {
             }
             System.out.print("\n");
         }
-        System.out.println();*/
+        System.out.println();
     }
     public static String[][] parseBoardString(int boardSize, String gameBoard, String[][] boardSpaces) {
         LinkedList<String> temp = new LinkedList<>();

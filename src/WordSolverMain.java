@@ -6,7 +6,17 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class WordSolverMain {
-
+    /*
+7
+3. .. .. 2. .. .. 3.
+.. .3 .. .. .. .3 ..
+.. ..  a  d .2 .. ..
+2. ..  u  h .. .. 2.
+.. ..  l  o .2 .. ..
+..  m  a  t .. .3 ..
+ r  e  s  i  d .. 3.
+toloeri
+     */
     public static void main(String[] args) throws IOException {
         // This block validates dictionary file specification,
         // sorts the dictionary, and adds all words to trie
@@ -33,12 +43,9 @@ public class WordSolverMain {
         while(boardSize != 1) {
             boardSize = Integer.parseInt(sc.nextLine());
             ArrayList<String[]> playInfo = new ArrayList<>();
-            while(counter < boardSize) {
+            for(int i = 0; i < boardSize; i++) {
                 gameBoard = gameBoard.concat(sc.nextLine());
-                if(counter + 1 != boardSize) {
-                    gameBoard = gameBoard.concat("\n");
-                }
-                counter++;
+                gameBoard = gameBoard.concat("\n");
             }
             trayString = sc.nextLine();
             for(int i = 0; i < trayString.length(); i ++) {
@@ -46,41 +53,14 @@ public class WordSolverMain {
             }
             String[][] boardSpaces = new String[boardSize][boardSize];
             boardSpaces = GameLoop.parseBoardString(boardSize, gameBoard, boardSpaces);
-            for(int i = 0; i < boardSpaces.length; i++) {
-                for(int j = 0; j < boardSpaces.length; j++) {
+            for(int i = 0; i < boardSize; i++) {
+                for(int j = 0; j < boardSize; j++) {
                     System.out.print(boardSpaces[i][j] + " ");
                 }
                 System.out.print("\n");
             }
             GameLoop.cpuTurn(boardSpaces, wordTrie, tray, playInfo);
         }
-        /*
-        3. .. .. 2. .. .. 3.\n
-        .. .3 .. .. .. .3 ..\n
-        .. ..  a  d .2 .. ..\n
-        2. ..  u  h .. .. 2.\n
-        .. ..  l  o .2 .. ..\n
-        ..  m  a  t .. .3 ..\n
-         r  e  s  i  d .. 3.\n
-         */
-        /*int boardSize = 7;
-        String gameBoard =
-                "3. .. .. 2. .. .. 3.\n" +
-                ".. .3 .. .. .. .3 ..\n" +
-                ".. ..  a  d .2 .. ..\n" +
-                "2. ..  u  h .. .. 2.\n" +
-                ".. ..  l  o .2 .. ..\n" +
-                "..  m  a  t .. .3 ..\n" +
-                " r  e  s  i  d .. 3.\n";
-        ArrayList<Character> tray = new ArrayList<>();
-        tray.add('t');
-        tray.add('o');
-        tray.add('l');
-        tray.add('o');
-        tray.add('e');
-        tray.add('r');
-        tray.add('d');
-        //['t', 'o', 'l', 'o', 'e', 'r', 'i';];*/
     }
     public class ParseFile {
         public static List<String> readFileToList(String fileName) throws IOException {
