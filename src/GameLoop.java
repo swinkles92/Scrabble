@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -66,6 +65,8 @@ public class GameLoop {
                 }
             }
         }
+        // Compares words found to select highest scoring
+        // and adds them to board
         int bestWordHorizScore = Integer.parseInt(bestWordHoriz[3]);
         int bestWordVertScore = Integer.parseInt(bestWordVert[3]);
         String bestWord;
@@ -83,18 +84,21 @@ public class GameLoop {
             boolean isHorizWord = false;
             mutateBoard(boardSpaces, bestWord, bestWordRow, bestWordCol, isHorizWord);
         }
+        // Prints solution, score, and newly mutated board
         int bestWordScore = scoreWord(bestWord);
         System.out.println("Solution " + bestWord + " has " + bestWordScore + " points");
         System.out.println("Solution Board:");
         for(int i = 0; i < boardSpaces.length; i++) {
             for(int j = 0; j < boardSpaces.length; j++) {
                 System.out.print(boardSpaces[i][j]);
+                System.out.print(" ");
             }
             System.out.print("\n");
         }
         System.out.println();
     }
     public static String[][] parseBoardString(int boardSize, String gameBoard, String[][] boardSpaces) {
+        // Constructs 2d array from a user-inputted gameBoard string
         LinkedList<String> temp = new LinkedList<>();
         for(int i = 0; i < ((int)Math.pow(boardSize, 2) * 3); i++) {
             if(gameBoard.charAt(i) == '\n') {
@@ -120,6 +124,8 @@ public class GameLoop {
         return boardSpaces;
     }
     public static ArrayList<String[]> findPossAnchors(String[][] boardSpaces) {
+        // Finds all anchors on board. An anchor is any tile adjacent to a tile
+        // filled with a letter.
         ArrayList<String[]> anchorsList = new ArrayList<>();
         for(int i = 0; i < boardSpaces.length; i++) {
             for(int j = 0; j < boardSpaces.length; j++) {
@@ -160,6 +166,8 @@ public class GameLoop {
         }
         return anchorsList;
     }
+    // Checks to see which letters are able to be added that would also
+    // create words on the vertical.
     public static ArrayList<Character> crossCheck(String [][] boardSpaces,
                                                int row,
                                                int col,
@@ -269,6 +277,7 @@ public class GameLoop {
         }
         return word;
     }
+    // First recursive method to find potential words
     public static void leftPart(String[][] boardSpaces,
                                 WordTrie wordTrie,
                                 ArrayList<Character> tray,
@@ -281,11 +290,15 @@ public class GameLoop {
                                 ArrayList<String[]> playInfo) {
         HashMap<Character, WordTNode> children = node.getChildren();
         WordTNode letterNode;
+        // Check to make sure that function stays within gameboard boundaries
         if(col >= 0) {
             extendRight(boardSpaces, wordTrie, tray, row, col, "", node, legalWords, playInfo);
+            // Recursion exit condition
             if(limit > 0) {
+                // Cycles through all letters in a specific object's keyset
                 for(var child : children.keySet()) {
                     char c = child.charValue();
+                    // Ensures that c is present in tray
                     if (tray.contains(child.charValue())) {
                         tray.remove(Character.valueOf(c));
                         if(children.containsKey(c)) {
@@ -305,6 +318,7 @@ public class GameLoop {
             }
         }
     }
+    // Second recursive method to find potential words
     public static void extendRight(String[][] boardSpaces,
                                      WordTrie wordTrie,
                                      ArrayList<Character> tray,
@@ -316,7 +330,9 @@ public class GameLoop {
                                      ArrayList<String[]> playInfo) {
         HashMap<Character, WordTNode> children = node.getChildren();
         WordTNode letterNode;
+        // Check to make sure function stays within gameboard boundaries
         if(col < boardSpaces.length) {
+            // Check to see if tile is vacant
             if(!boardSpaces[row][col].contains(" ")) {
                 if(node.isCompleteWord()) {
                     if(!legalWords.contains(partialWord)) {
@@ -347,6 +363,7 @@ public class GameLoop {
                     col = counter;
                 }
             }
+            // If tile is NOT vacant
             else {
                 String squareString = boardSpaces[row][col].trim();
                 squareString = squareString.toLowerCase();
@@ -368,6 +385,8 @@ public class GameLoop {
         }
         return k;
     }
+    // Scores a word bases on letter values
+    // from a basic scrabble ruleset
     public static int scoreWord(String word) {
         int score = 0;
         for(int i = 0; i < word.length(); i++) {
@@ -410,6 +429,7 @@ public class GameLoop {
         }
         return score;
     }
+    // Creates a transposed board to be used in cputurn
     public static String[][] transposeBoard(String[][] boardSpaces) {
         int size = boardSpaces.length;
         String[][] transposedMatrix = new String[size][size];
@@ -420,6 +440,7 @@ public class GameLoop {
         }
         return transposedMatrix;
     }
+    // Find potential prefixes for recursive functions
     public static String findPrefix(String[][] boardSpaces, int row, int col) {
         String word = "";
         for(int i = col; i > 0; i--) {
@@ -431,6 +452,7 @@ public class GameLoop {
         }
         return word;
     }
+    // Adds cpu selected word to game board
     public static String[][] mutateBoard(String[][] boardSpaces,
                                          String word,
                                          int row,

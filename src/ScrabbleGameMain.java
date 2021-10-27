@@ -13,11 +13,17 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class ScrabbleGameMain extends Application{
     private final int SIZE = 800;
     private int score = 0;
     private char[] trayArray = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
-    private int selectedTrayEle = 0;
+    private final ArrayList<Rectangle> trayList = new ArrayList<>();
+    private final ArrayList<Label> boardList = new ArrayList<>();
+    private boolean moveInProgress = false;
+    private char selectedChar = ' ';
+
     public static void main(String[] args) { launch(args); }
 
     @Override
@@ -44,6 +50,8 @@ public class ScrabbleGameMain extends Application{
 
     }
     public TilePane generateBoard() {
+        // Generates a standard gameBoard using the string
+        // returned from getBoardConfig() method
         TilePane gameBoard = new TilePane();
         gameBoard.setAlignment(Pos.CENTER);
         gameBoard.setVgap(.25);
@@ -52,7 +60,20 @@ public class ScrabbleGameMain extends Application{
         String[][] boardConfig = getBoardConfig();
         for(int i = 0; i < 15; i++) {
             for(int j = 0; j < 15; j++) {
+                StackPane stackPane = new StackPane();
                 Rectangle rect = new Rectangle(SIZE / 25, SIZE / 25);
+                Label label = new Label();
+                label.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+                label.setTextFill(Color.BLACK);
+                label.setMouseTransparent(true);
+                boardList.add(label);
+                rect.setOnMouseClicked(event -> {
+                    if(moveInProgress && label.getText() == "") {
+                        label.setText(Character.toString(selectedChar));
+                        moveInProgress = false;
+                    }
+                });
+                // Assigns respective score modifiers to tiles
                 if(boardConfig[i][j].contains("3WS")) {
                     rect.setFill(Color.RED);
                 }
@@ -68,23 +89,11 @@ public class ScrabbleGameMain extends Application{
                 else if(boardConfig[i][j].contains("S")) {
                     rect.setFill(Color.LAVENDER);
                 }
-                else rect.setFill(Color.GHOSTWHITE);
-                gameBoard.getChildren().add(rect);
+                else rect.setFill(Color.LIGHTGRAY);
+                stackPane.getChildren().addAll(rect, label);
+                gameBoard.getChildren().add(stackPane);
             }
         }
-        /*for(int i = 0; i < 225; i++) {
-            StackPane stackPane = new StackPane();
-            int counter = i;
-            Rectangle rect = new Rectangle(SIZE / 25, SIZE / 25);
-            rect.setFill(Color.GHOSTWHITE);
-            if(i =
-            Label label = new Label();
-            label.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
-            label.setTextFill(Color.CORNFLOWERBLUE);
-            label.setMouseTransparent(true);
-            stackPane.getChildren().addAll(rect);
-            gameBoard.getChildren().add(stackPane);
-        }*/
         return gameBoard;
     }
     public TilePane generateTray(char[] trayArray) {
@@ -95,17 +104,28 @@ public class ScrabbleGameMain extends Application{
         for(int i = 0; i < 7; i++) {
             StackPane stackPane = new StackPane();
             Rectangle rect = new Rectangle(SIZE / 10, SIZE / 10);
-            rect.setFill(Color.MISTYROSE);
+            rect.setFill(Color.LIGHTGREEN);
+            trayList.add(rect);
             Label label = new Label(String.valueOf(trayArray[i]));
             label.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
-            label.setTextFill(Color.CORNFLOWERBLUE);
+            label.setTextFill(Color.DARKBLUE);
             label.setMouseTransparent(true);
+            int finalI = i;
+            rect.setOnMouseClicked(event -> {
+                if(!moveInProgress) {
+                    moveInProgress = true;
+                    rect.setFill(Color.DARKBLUE);
+                    label.setTextFill(Color.WHITE);
+                    selectedChar = trayArray[finalI];
+                }
+            });
             stackPane.getChildren().addAll(rect, label);
             trayPane.getChildren().add(stackPane);
         }
         return trayPane;
     }
     public String[][] getBoardConfig() {
+        // Generic scrabble board configuration
         String[][] boardConfig = {
                 // 1
                 {"3WS", "0", "0", "2LS", "0", "0", "0", "3WS", "0", "0", "0", "2LS", "0", "0", "3WS"},

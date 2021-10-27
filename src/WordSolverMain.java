@@ -7,6 +7,8 @@ import java.util.*;
 
 public class WordSolverMain {
     /*
+    This is an example input for which my program will find a word
+    and place it on the board.
 7
 3. .. .. 2. .. .. 3.
 .. .3 .. .. .. .3 ..
@@ -15,7 +17,7 @@ public class WordSolverMain {
 .. ..  l  o .2 .. ..
 ..  m  a  t .. .3 ..
  r  e  s  i  d .. 3.
-toloeri
+toloerd
      */
     public static void main(String[] args) throws IOException {
         // This block validates dictionary file specification,
@@ -28,6 +30,7 @@ toloeri
         // Validating user input
         File wordFile = new File(dictionaryFile);
         List<String> wordsList = ParseFile.readFileToList(wordFile.toString());
+        // Adds all words in the dictionary to trie data structure
         WordTrie wordTrie = new WordTrie();
         for(Object word : wordsList) {
             wordTrie.add((String) word);
@@ -40,6 +43,7 @@ toloeri
         String gameBoard = "";
         String trayString;
         ArrayList<Character> tray = new ArrayList<>();
+        // Loop to continue accepting user input until exit condition is met
         while(boardSize != 1) {
             boardSize = Integer.parseInt(sc.nextLine());
             ArrayList<String[]> playInfo = new ArrayList<>();
